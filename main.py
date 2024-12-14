@@ -1,5 +1,3 @@
-import json
-import os
 import time
 from datetime import datetime
 
@@ -29,34 +27,6 @@ xpath = {
 class Booking:
     def __init__(self, values):
         self.values = values
-        self.file = "cookies.json"
-
-    def load_cookies(self):
-        if not os.path.exists(self.file):
-            print("Cookies not found.")
-            return False
-        with open(self.file, "r") as cookie_file:
-            cookies = json.load(cookie_file)
-        for cookie in cookies:
-            self.driver.add_cookie(cookie)
-        self.driver.refresh()
-        print("Cookies loaded")
-
-    def save_cookies(self):
-        cookies = self.driver.get_cookies()
-        with open(self.file, "w") as cookie_file:
-            json.dump(cookies, cookie_file)
-        print("Cookies saved.")
-
-    def check_signin(self):
-        self.driver.find_element(By.CSS_SELECTOR, "a > i.fa-align-justify").click()
-        try:
-            print("Sign-in process started")
-            self.click(By.XPATH, xpath["login"])
-            return False
-        except:
-            print("Sign-in successful")
-            return True
 
     def click(self, xpath):
         self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath))).click()
