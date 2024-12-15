@@ -214,10 +214,9 @@ class BookingApp:
         values["Passengers"] = passenger_details
 
         try:
-            print(values)
-
             booking_data = BookingData(**values)
             self.status_label.config(text="Booking process started successfully!", foreground="green")
+            return values
         except ValidationError as e:
             error_messages = []
             for error in e.errors():
@@ -230,6 +229,8 @@ class BookingApp:
                 self.status_label.config(text=f"Errors:\n{error_summary}", foreground="red")
             else:
                 self.status_label.config(text="Unknown validation error.", foreground="red")
+
+            return None
 
 
 if __name__ == "__main__":
