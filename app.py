@@ -231,9 +231,3 @@ class BookingApp:
                 self.status_label.config(text="Unknown validation error.", foreground="red")
 
             return None
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = BookingApp(root)
-    root.mainloop()

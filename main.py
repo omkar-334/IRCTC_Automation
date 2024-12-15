@@ -4,6 +4,9 @@ from app import BookingApp
 from script import Booking
 from values import values
 
+# same case for backend and frontend
+# invalid station error
+
 
 def book(values=None):
     if not values:
