@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from pydantic import ValidationError
+from tkcalendar import Calendar
 
 from models import BookingData
 
@@ -16,6 +17,7 @@ class BookingApp:
             "Password",
             "FromStation",
             "ToStation",
+            "Date",
             "Class",
             "Quota",
             "MobileNo",
@@ -69,11 +71,16 @@ class BookingApp:
         right_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
 
         for i, field in enumerate(self.fields):
-            if field not in ["Class", "Quota"]:
+            if field not in ["Date", "Class", "Quota"]:
                 ttk.Label(left_frame, text=field).grid(row=i, column=0, sticky=tk.W, pady=5)
                 entry = ttk.Entry(left_frame, show="*" if field == "Password" else None)
                 entry.grid(row=i, column=1, sticky=(tk.W, tk.E), pady=5)
                 self.entries[field] = entry
+            elif field == "Date":
+                ttk.Label(left_frame, text="Date:").grid(row=i, column=0, sticky=tk.W, pady=5)
+                self.date_entry = Calendar(left_frame, selectmode="day", date_pattern="yyyy-mm-dd")
+                self.date_entry.grid(row=i, column=1, sticky=(tk.W, tk.E), pady=5)
+                self.entries["Date"] = self.date_entry
 
             elif field == "Class":
                 ttk.Label(left_frame, text="Class:").grid(row=i, column=0, sticky=tk.W, pady=5)
@@ -149,7 +156,10 @@ class BookingApp:
         """
         Collect all form data and initiate the booking process.
         """
-        values = {field: entry.get() for field, entry in self.entries.items()}
+        values = {
+            field: entry.get() if field != "Date" else self.date_entry.get_date()
+            for field, entry in self.entries.items()
+        }
 
         passenger_details = []
         for entry_set in self.passenger_entries:

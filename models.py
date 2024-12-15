@@ -42,6 +42,7 @@ class BookingData(BaseModel):
     Password: str
     FromStation: str
     ToStation: str
+    Date: str
     Class: str
     Quota: str
     MobileNo: str
@@ -66,6 +67,18 @@ class BookingData(BaseModel):
         if not v.isalpha():
             raise ValueError(f"{field.field_name} must contain only letters.")
         return v.title()
+
+    @field_validator("Date")
+    def validate_date(cls, v):
+        if len(v) != 10 or v[2] != "-" or v[5] != "-":
+            raise ValueError("Date must be in the format DD-MM-YYYY.")
+        day, month, year = v.split("-")
+        if not (day.isdigit() and month.isdigit() and year.isdigit()):
+            raise ValueError("Date must contain valid numbers.")
+        day, month, year = int(day), int(month), int(year)
+        if not (1 <= day <= 31 and 1 <= month <= 12 and year >= 1900):
+            raise ValueError("Date contains invalid day, month, or year.")
+        return v
 
     @field_validator("Class")
     def validate_class(cls, v):

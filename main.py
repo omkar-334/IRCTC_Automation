@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -31,10 +32,12 @@ class Booking:
     def click(self, xpath):
         self.wait.until(EC.element_to_be_clickable((By.XPATH, xpath))).click()
 
-    def send_keys(self, xpath, keys):
+    def send_keys(self, xpath, keys, nextkeys=None):
         field = self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
         field.clear()
         field.send_keys(keys)
+        if nextkeys:
+            field.send_keys(nextkeys)
 
     def signin(self):
         self.send_keys(xpath["user_id"], self.values["UserID"])
@@ -47,6 +50,9 @@ class Booking:
     def enter_form(self):
         self.send_keys(xpath["from"], self.values["FromStation"])
         self.send_keys(xpath["to"], self.values["ToStation"])
+
+        date = datetime.strptime(self.values["Date"], "%Y-%m-%d").strftime("%d/%m/%Y")
+        self.send_keys(xpath["date"], date, Keys.ENTER)
 
         self.click(xpath["class"])
         self.click(xpath["option"].format(xpath["class"], self.values["Class"]))
@@ -89,6 +95,7 @@ if __name__ == "__main__":
         "Password": "password123",
         "FromStation": "KACHEGUDA - KCG (SECUNDERABAD)",
         "ToStation": "MYSURU JN - MYS (MYSURU)",
+        "Date": "2024-12-20",
         "Class": "Sleeper (SL)",
         "Quota": "GENERAL",
         "MobileNo": "1234567890",
