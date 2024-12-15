@@ -11,6 +11,7 @@ class BookingApp:
     def __init__(self, root):
         self.root = root
         self.root.title("IRCTC Tatkal Ticket Booking")
+        self.root.state("zoomed")
 
         self.fields = [
             "UserID",
@@ -50,6 +51,21 @@ class BookingApp:
             "Second Sitting (2S)",
         ]
 
+        self.genders = [
+            "Male",
+            "Female",
+            "Transgender",
+        ]
+
+        self.berths = [
+            "No Preference",
+            "Lower",
+            "Middle",
+            "Upper",
+            "Side Lower",
+            "Side Upper",
+        ]
+
         self.entries = {}
         self.passenger_entries = []
 
@@ -67,8 +83,8 @@ class BookingApp:
         left_frame = ttk.Frame(main_frame, padding="10")
         left_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
-        right_frame = ttk.Frame(main_frame, padding="10")
-        right_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
+        passenger_frame = ttk.Frame(main_frame, padding="10")
+        passenger_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
 
         for i, field in enumerate(self.fields):
             if field not in ["Date", "Class", "Quota"]:
@@ -107,7 +123,7 @@ class BookingApp:
         passenger_slider.set(self.num_passengers.get())
         passenger_slider.grid(row=len(self.fields), column=1, sticky=(tk.W, tk.E), pady=5)
 
-        self.passenger_frame = ttk.Frame(right_frame)
+        self.passenger_frame = ttk.Frame(passenger_frame)
         self.passenger_frame.grid(row=0, column=0, sticky=(tk.W, tk.E))
 
         self.update_passenger_fields(self.num_passengers.get())
@@ -129,28 +145,52 @@ class BookingApp:
 
         self.passenger_entries = []
         row_index = 0
+        column_index = 0
+
         for i in range(num_passengers):
+            if i % 3 == 0 and i > 0:  # Move to next column after 3 passengers
+                column_index += 1
+                row_index = 0
+
             ttk.Label(self.passenger_frame, text=f"Passenger {i + 1}").grid(
-                row=row_index, column=0, columnspan=2, sticky=tk.W, pady=10
+                row=row_index, column=column_index * 2, columnspan=2, sticky=tk.W, pady=10
             )
             row_index += 1
 
-            ttk.Label(self.passenger_frame, text="Name:").grid(row=row_index, column=0, sticky=tk.W, pady=5)
+            ttk.Label(self.passenger_frame, text="Name:").grid(
+                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+            )
             name_entry = ttk.Entry(self.passenger_frame)
-            name_entry.grid(row=row_index, column=1, sticky=(tk.W, tk.E), pady=5)
+            name_entry.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
             row_index += 1
 
-            ttk.Label(self.passenger_frame, text="Age:").grid(row=row_index, column=0, sticky=tk.W, pady=5)
+            ttk.Label(self.passenger_frame, text="Age:").grid(
+                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+            )
             age_entry = ttk.Entry(self.passenger_frame)
-            age_entry.grid(row=row_index, column=1, sticky=(tk.W, tk.E), pady=5)
+            age_entry.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
             row_index += 1
 
-            ttk.Label(self.passenger_frame, text="Gender:").grid(row=row_index, column=0, sticky=tk.W, pady=5)
-            gender_entry = ttk.Entry(self.passenger_frame)
-            gender_entry.grid(row=row_index, column=1, sticky=(tk.W, tk.E), pady=5)
+            ttk.Label(self.passenger_frame, text="Gender:").grid(
+                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+            )
+            gender_combobox = ttk.Combobox(self.passenger_frame, values=self.genders)
+            gender_combobox.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
+            gender_combobox.state(["readonly"])
             row_index += 1
 
-            self.passenger_entries.append({"Name": name_entry, "Age": age_entry, "Gender": gender_entry})
+            ttk.Label(self.passenger_frame, text="Berth:").grid(
+                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+            )
+            berth_combobox = ttk.Combobox(self.passenger_frame, values=self.berths)
+            berth_combobox.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
+            berth_combobox.set(self.berths[0])
+            berth_combobox.state(["readonly"])
+            row_index += 1
+
+            self.passenger_entries.append(
+                {"Name": name_entry, "Age": age_entry, "Gender": gender_combobox, "Berth": berth_combobox}
+            )
 
     def handle_booking(self):
         """
@@ -168,6 +208,7 @@ class BookingApp:
                     "Name": entry_set["Name"].get(),
                     "Age": entry_set["Age"].get(),
                     "Gender": entry_set["Gender"].get(),
+                    "Berth": entry_set["Berth"].get(),
                 }
             )
 
