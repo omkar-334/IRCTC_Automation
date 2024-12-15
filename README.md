@@ -26,6 +26,11 @@ python -m venv .venv
 pip install -r requirements.txt  
 ```  
   
+4. Execute
+```python
+python main.py
+```
+
 ### Process
 1. Enter the train details form
 2. Select ticket
