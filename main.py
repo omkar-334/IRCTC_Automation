@@ -2,7 +2,6 @@ import time
 from datetime import datetime
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -47,12 +46,20 @@ class Booking:
         self.click(xpath["signin"])
         print(f"Signed in as {values['UserID']}")
 
+    def set_date_via_js(self, xpath, raw_date):
+        date = datetime.strptime(raw_date, "%Y-%m-%d").strftime("%d/%m/%Y")
+        element = self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
+        self.driver.execute_script(
+            "arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('input'));",
+            element,
+            date,
+        )
+
     def enter_form(self):
         self.send_keys(xpath["from"], self.values["FromStation"])
         self.send_keys(xpath["to"], self.values["ToStation"])
 
-        date = datetime.strptime(self.values["Date"], "%Y-%m-%d").strftime("%d/%m/%Y")
-        self.send_keys(xpath["date"], date, Keys.ENTER)
+        self.set_date_via_js(xpath["date"], self.values["Date"])
 
         self.click(xpath["class"])
         self.click(xpath["option"].format(xpath["class"], self.values["Class"]))
