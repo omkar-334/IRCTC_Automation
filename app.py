@@ -6,6 +6,7 @@ from tkcalendar import Calendar
 
 from dropdowns import berths, classes, genders, quotas
 from models import BookingData
+from script import Booking
 
 
 class BookingApp:
@@ -182,7 +183,12 @@ class BookingApp:
         try:
             booking_data = BookingData(**values)
             self.status_label.config(text="Booking process started successfully!", foreground="green")
-            return values
+            print("\n---------")
+            print("Values Entered")
+
+            booking = Booking(values)
+            booking.main()
+
         except ValidationError as e:
             error_messages = messages(e)
 

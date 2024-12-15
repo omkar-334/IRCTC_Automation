@@ -10,32 +10,22 @@ from values import values
 
 
 def book(values=None):
-    # Entry Loop
+    # If default values are not found, then GUI is provided
     if not values:
-        while True:
-            root = tkinter.Tk()
-            app = BookingApp(root)
-            root.mainloop()
+        root = tkinter.Tk()
+        app = BookingApp(root)
+        root.mainloop()
 
-            values = app.handle_booking()
-
-            if values:
-                break
-
-    # Final validation
-    if values:
+    # Else Booking is started directly.
+    else:
         try:
             BookingData(**values)
+
+            booking = Booking(values)
+            booking.main()
         except Exception as e:
             errors = "\n".join(messages(e))
             print(errors)
-            return
-
-    print("values successfully filled")
-
-    # Ticket booking
-    booking = Booking(values)
-    booking.main()
 
 
 book(values)

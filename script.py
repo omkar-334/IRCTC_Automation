@@ -160,5 +160,7 @@ class Booking:
 
         self.start_payment()
 
+        print("Please finish the payment.")
+
         while True:
             time.sleep(1)

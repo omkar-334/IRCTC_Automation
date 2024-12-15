@@ -20,9 +20,7 @@ class Passenger(BaseModel):
     def validate_name(cls, v):
         if not v.strip():
             raise ValueError("Name cannot be empty.")
-        if not v.isalpha():
-            raise ValueError("Name must contain only letters.")
-        return v.title()
+        return v
 
     @field_validator("Age")
     def validate_age(cls, v):
