@@ -68,7 +68,7 @@ class Booking:
         time.sleep(10)
 
         self.click(xpath["signin"])
-        print(f"Signed in as {values['UserID']}")
+        print(f"Signed in as {self.values['UserID']}")
 
     def set_date_via_calendar(self, xpath, raw_date):
         date_obj = datetime.strptime(raw_date, "%Y-%m-%d")
