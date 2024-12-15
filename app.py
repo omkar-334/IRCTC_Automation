@@ -4,6 +4,7 @@ from tkinter import ttk
 from pydantic import ValidationError
 from tkcalendar import Calendar
 
+from dropdowns import berths, classes, genders, quotas
 from models import BookingData
 
 
@@ -23,47 +24,10 @@ class BookingApp:
             "Quota",
             "MobileNo",
         ]
-
-        self.quotas = [
-            "GENERAL",
-            "LADIES",
-            "LOWER BERTH/SR.CITIZEN",
-            "PERSON WITH DISABILITY",
-            "DUTY PASS",
-            "TATKAL",
-            "PREMIUM TATKAL",
-        ]
-
-        self.classes = [
-            "Anubhuti Class (EA)",
-            "AC First Class (1A)",
-            "Vistadome AC (EV)",
-            "Exec. Chair Car (EC)",
-            "AC 2 Tier (2A)",
-            "First Class (FC)",
-            "AC 3 Tier (3A)",
-            "AC 3 Economy (3E)",
-            "Vistadome Chair Car (VC)",
-            "AC Chair car (CC)",
-            "Sleeper (SL)",
-            "Vistadome Non AC (VS)",
-            "Second Sitting (2S)",
-        ]
-
-        self.genders = [
-            "Male",
-            "Female",
-            "Transgender",
-        ]
-
-        self.berths = [
-            "No Preference",
-            "Lower",
-            "Middle",
-            "Upper",
-            "Side Lower",
-            "Side Upper",
-        ]
+        self.berths = berths
+        self.classes = classes
+        self.genders = genders
+        self.quotas = quotas
 
         self.entries = {}
         self.passenger_entries = []
@@ -218,11 +182,7 @@ class BookingApp:
             self.status_label.config(text="Booking process started successfully!", foreground="green")
             return values
         except ValidationError as e:
-            error_messages = []
-            for error in e.errors():
-                field = error.get("loc", ["Unknown field"])[0]
-                message = error.get("msg", "Unknown error")
-                error_messages.append(f"{field}: {message}")
+            error_messages = messages(e)
 
             if error_messages:
                 error_summary = "\n".join(error_messages)
@@ -231,3 +191,12 @@ class BookingApp:
                 self.status_label.config(text="Unknown validation error.", foreground="red")
 
             return None
+
+
+def messages(e):
+    error_messages = []
+    for error in e.errors():
+        field = error.get("loc", ["Unknown field"])[0]
+        message = error.get("msg", "Unknown error")
+        error_messages.append(f"{field}: {message}")
+    return error_messages

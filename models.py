@@ -3,6 +3,8 @@ from typing import List
 
 from pydantic import BaseModel, field_validator
 
+from dropdowns import berths, classes, genders, quotas
+
 
 class Passenger(BaseModel):
     """
@@ -30,9 +32,15 @@ class Passenger(BaseModel):
 
     @field_validator("Gender")
     def validate_gender(cls, v):
-        if v.lower() not in {"Male", "Female", "Transgender"}:
-            raise ValueError("Gender must be 'Male', 'Female', or 'Transgender'.")
-        return v.capitalize()
+        if v not in genders:
+            raise ValueError(f"Gender must be {', '.join(genders)}.")
+        return v
+
+    @field_validator("Berth")
+    def validate_berth(cls, v):
+        if v not in berths:
+            raise ValueError(f"Berth must be {', '.join(berths)}.")
+        return v
 
 
 class BookingData(BaseModel):
@@ -73,6 +81,18 @@ class BookingData(BaseModel):
         date = datetime.strptime(v, "%Y-%m-%d")
         if date < datetime.now():
             raise ValueError("Choose a future date.")
+        return v
+
+    @field_validator("Class")
+    def validate_class(cls, v):
+        if v not in classes:
+            raise ValueError(f"Class must be {', '.join(classes)}.")
+        return v
+
+    @field_validator("Quota")
+    def validate_quota(cls, v):
+        if v not in quotas:
+            raise ValueError(f"Quota must be {', '.join(quotas)}.")
         return v
 
     @field_validator("MobileNo")
