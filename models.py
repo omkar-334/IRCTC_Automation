@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel, field_validator
@@ -11,6 +12,7 @@ class Passenger(BaseModel):
     Name: str
     Age: int
     Gender: str
+    Berth: str
 
     @field_validator("Name")
     def validate_name(cls, v):
@@ -28,8 +30,8 @@ class Passenger(BaseModel):
 
     @field_validator("Gender")
     def validate_gender(cls, v):
-        if v.lower() not in {"male", "female", "other"}:
-            raise ValueError("Gender must be 'Male', 'Female', or 'Other'.")
+        if v.lower() not in {"Male", "Female", "Transgender"}:
+            raise ValueError("Gender must be 'Male', 'Female', or 'Transgender'.")
         return v.capitalize()
 
 
@@ -64,35 +66,14 @@ class BookingData(BaseModel):
     def validate_station(cls, v, field):
         if not v.strip():
             raise ValueError(f"{field.field_name} cannot be empty.")
-        if not v.isalpha():
-            raise ValueError(f"{field.field_name} must contain only letters.")
         return v.title()
 
     @field_validator("Date")
     def validate_date(cls, v):
-        if len(v) != 10 or v[2] != "-" or v[5] != "-":
-            raise ValueError("Date must be in the format DD-MM-YYYY.")
-        day, month, year = v.split("-")
-        if not (day.isdigit() and month.isdigit() and year.isdigit()):
-            raise ValueError("Date must contain valid numbers.")
-        day, month, year = int(day), int(month), int(year)
-        if not (1 <= day <= 31 and 1 <= month <= 12 and year >= 1900):
-            raise ValueError("Date contains invalid day, month, or year.")
+        date = datetime.strptime(v, "%Y-%m-%d")
+        if date < datetime.now():
+            raise ValueError("Choose a future date.")
         return v
-
-    @field_validator("Class")
-    def validate_class(cls, v):
-        valid_classes = {"1A", "2A", "3A", "SL", "CC", "2S"}
-        if v.upper() not in valid_classes:
-            raise ValueError(f"Class must be one of {', '.join(valid_classes)}.")
-        return v.upper()
-
-    @field_validator("Quota")
-    def validate_quota(cls, v):
-        valid_quotas = {"GN", "TQ", "LD", "DF", "PH", "FT"}
-        if v.upper() not in valid_quotas:
-            raise ValueError(f"Quota must be one of {', '.join(valid_quotas)}.")
-        return v.upper()
 
     @field_validator("MobileNo")
     def validate_mobile(cls, v):
