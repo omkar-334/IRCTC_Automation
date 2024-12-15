@@ -35,7 +35,6 @@ class BookingApp:
         ]
 
         self.classes = [
-            "All Classes",
             "Anubhuti Class (EA)",
             "AC First Class (1A)",
             "Vistadome AC (EV)",
