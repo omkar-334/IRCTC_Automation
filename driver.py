@@ -21,6 +21,7 @@ def create_driver(user_agent=None, headless=True):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("log-level=3")
     prefs = {
+        "profile.default_content_setting_values.notifications": 2,
         "profile.default_content_settings.popups": 0,
         "download.default_directory": str(os.getcwd()),
         "download.prompt_for_download": False,
