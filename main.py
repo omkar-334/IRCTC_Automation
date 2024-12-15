@@ -8,20 +8,25 @@ from selenium.webdriver.support.ui import WebDriverWait
 from driver import create_driver
 
 xpath = {
+    # Signin
     "login": "//button[text()='LOGIN']",
     "user_id": "//input[@placeholder='User Name']",
     "password": "//input[@placeholder='Password']",
     "signin": "//button[@type='submit' and text()='SIGN IN']",
+    #
+    # Enter Form
     "from": "//p-autocomplete[@aria-label='Enter From station. Input is Mandatory.']//input",
     "to": "//p-autocomplete[@aria-label='Enter To station. Input is Mandatory.']//input",
     "date": "//p-calendar[@aria-label='Enter Journey Date. Formate D.D./.M.M./.Y.Y.Y.Y. Input is Mandatory.']//input",
     "class": "//p-dropdown[@id='journeyClass' and @formcontrolname='journeyClass']",
     "quota": "//p-dropdown[@id='journeyQuota' and @formcontrolname='journeyQuota']",
     "option": "{}//li[@role='option' and normalize-space(@aria-label)='{}']",
-    # "book_quota": "//li[normalize-space(.//span[text()='{}'])]//a",
-    "select": "//td[normalize-space(.) = '{}']",
-    "book": "//button[@type='button' and text()='Book Now']",
-}
+    #
+    # Select Ticket
+    "modify_search": "//button[@type='submit' and contains(., 'Modify Search')]",
+    "refresh": "//strong[normalize-space(.) = '{}']/ancestor::div/following-sibling::div//span[contains(@class, 'fa-repeat')]",
+    "select_date": "//strong[normalize-space(.) = '{}']",
+    "book": "//button[@type='button' and normalize-space(.)='Book Now']",
 
 
 class Booking:
@@ -78,6 +83,17 @@ class Booking:
 
         print("Form Submitted.")
 
+    def select_ticket(self):
+        self.click(xpath["modify_search"])
+
+        self.click(xpath["refresh"].format(self.values["Class"]))
+
+        date = datetime.strptime(self.values["Date"], "%Y-%m-%d").strftime("%a, %d %b")
+        self.click(xpath["select_date"].format(date))
+
+        self.click(xpath["book"])
+        print("Ticker Selected")
+
     def main(self):
         try:
             self.driver = create_driver(headless=False)
@@ -87,14 +103,7 @@ class Booking:
 
             self.enter_form()
 
-            self.click(xpath["select"].format(self.values["Class"]))
-            print("refreshed")
-
-            date = datetime.strptime(self.values["Date"], "%Y-%m-%d").strftime("%a, %d %b")
-            self.click(xpath["select"].format(date))
-            print("date selected")
-
-            self.click(xpath["book"])
+            self.select_ticket()
 
             self.signin()
 
@@ -111,7 +120,7 @@ if __name__ == "__main__":
         "Password": "password123",
         "FromStation": "KACHEGUDA - KCG (SECUNDERABAD)",
         "ToStation": "MYSURU JN - MYS (MYSURU)",
-        "Date": "2024-12-20",
+        "Date": "2025-01-31",
         "Class": "Sleeper (SL)",
         "Quota": "GENERAL",
         "MobileNo": "1234567890",
