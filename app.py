@@ -1,4 +1,4 @@
-import tkinter as tk
+import tkinter
 from tkinter import ttk
 
 from pydantic import ValidationError
@@ -32,7 +32,7 @@ class BookingApp:
         self.entries = {}
         self.passenger_entries = []
 
-        self.num_passengers = tk.IntVar(value=4)
+        self.num_passengers = tkinter.IntVar(value=4)
 
         self.create_widgets()
 
@@ -41,53 +41,55 @@ class BookingApp:
         Create and layout all widgets for the application.
         """
         main_frame = ttk.Frame(self.root, padding="10")
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        main_frame.grid(row=0, column=0, sticky=(tkinter.W, tkinter.E, tkinter.N, tkinter.S))
 
         left_frame = ttk.Frame(main_frame, padding="10")
-        left_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        left_frame.grid(row=0, column=0, sticky=(tkinter.W, tkinter.E, tkinter.N, tkinter.S))
 
         passenger_frame = ttk.Frame(main_frame, padding="10")
-        passenger_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S))
+        passenger_frame.grid(row=0, column=1, sticky=(tkinter.W, tkinter.E, tkinter.N, tkinter.S))
 
         for i, field in enumerate(self.fields):
             if field not in ["Date", "Class", "Quota"]:
-                ttk.Label(left_frame, text=field).grid(row=i, column=0, sticky=tk.W, pady=5)
+                ttk.Label(left_frame, text=field).grid(row=i, column=0, sticky=tkinter.W, pady=5)
                 entry = ttk.Entry(left_frame, show="*" if field == "Password" else None)
-                entry.grid(row=i, column=1, sticky=(tk.W, tk.E), pady=5)
+                entry.grid(row=i, column=1, sticky=(tkinter.W, tkinter.E), pady=5)
                 self.entries[field] = entry
             elif field == "Date":
-                ttk.Label(left_frame, text="Date:").grid(row=i, column=0, sticky=tk.W, pady=5)
+                ttk.Label(left_frame, text="Date:").grid(row=i, column=0, sticky=tkinter.W, pady=5)
                 self.date_entry = Calendar(left_frame, selectmode="day", date_pattern="yyyy-mm-dd")
-                self.date_entry.grid(row=i, column=1, sticky=(tk.W, tk.E), pady=5)
+                self.date_entry.grid(row=i, column=1, sticky=(tkinter.W, tkinter.E), pady=5)
                 self.entries["Date"] = self.date_entry
 
             elif field == "Class":
-                ttk.Label(left_frame, text="Class:").grid(row=i, column=0, sticky=tk.W, pady=5)
-                self.class_var = tk.StringVar(value=self.classes[0])
+                ttk.Label(left_frame, text="Class:").grid(row=i, column=0, sticky=tkinter.W, pady=5)
+                self.class_var = tkinter.StringVar(value=self.classes[0])
                 class_dropdown = ttk.Combobox(
                     left_frame, textvariable=self.class_var, values=self.classes, state="readonly"
                 )
-                class_dropdown.grid(row=i, column=1, sticky=(tk.W, tk.E), pady=5)
+                class_dropdown.grid(row=i, column=1, sticky=(tkinter.W, tkinter.E), pady=5)
                 self.entries["Class"] = self.class_var
 
             elif field == "Quota":
-                ttk.Label(left_frame, text="Quota:").grid(row=i, column=0, sticky=tk.W, pady=5)
-                self.quota_var = tk.StringVar(value=self.quotas[0])
+                ttk.Label(left_frame, text="Quota:").grid(row=i, column=0, sticky=tkinter.W, pady=5)
+                self.quota_var = tkinter.StringVar(value=self.quotas[0])
                 quota_dropdown = ttk.Combobox(
                     left_frame, textvariable=self.quota_var, values=self.quotas, state="readonly"
                 )
-                quota_dropdown.grid(row=i, column=1, sticky=(tk.W, tk.E), pady=5)
+                quota_dropdown.grid(row=i, column=1, sticky=(tkinter.W, tkinter.E), pady=5)
                 self.entries["Quota"] = self.quota_var
 
-        ttk.Label(left_frame, text="Number of Passengers:").grid(row=len(self.fields), column=0, sticky=tk.W, pady=5)
+        ttk.Label(left_frame, text="Number of Passengers:").grid(
+            row=len(self.fields), column=0, sticky=tkinter.W, pady=5
+        )
         passenger_slider = ttk.Scale(
-            left_frame, from_=1, to=10, orient=tk.HORIZONTAL, command=self.update_passenger_fields
+            left_frame, from_=1, to=10, orient=tkinter.HORIZONTAL, command=self.update_passenger_fields
         )
         passenger_slider.set(self.num_passengers.get())
-        passenger_slider.grid(row=len(self.fields), column=1, sticky=(tk.W, tk.E), pady=5)
+        passenger_slider.grid(row=len(self.fields), column=1, sticky=(tkinter.W, tkinter.E), pady=5)
 
         self.passenger_frame = ttk.Frame(passenger_frame)
-        self.passenger_frame.grid(row=0, column=0, sticky=(tk.W, tk.E))
+        self.passenger_frame.grid(row=0, column=0, sticky=(tkinter.W, tkinter.E))
 
         self.update_passenger_fields(self.num_passengers.get())
 
@@ -116,37 +118,37 @@ class BookingApp:
                 row_index = 0
 
             ttk.Label(self.passenger_frame, text=f"Passenger {i + 1}").grid(
-                row=row_index, column=column_index * 2, columnspan=2, sticky=tk.W, pady=10
+                row=row_index, column=column_index * 2, columnspan=2, sticky=tkinter.W, pady=10
             )
             row_index += 1
 
             ttk.Label(self.passenger_frame, text="Name:").grid(
-                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+                row=row_index, column=column_index * 2, sticky=tkinter.W, pady=5
             )
             name_entry = ttk.Entry(self.passenger_frame)
-            name_entry.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
+            name_entry.grid(row=row_index, column=column_index * 2 + 1, sticky=(tkinter.W, tkinter.E), pady=5)
             row_index += 1
 
             ttk.Label(self.passenger_frame, text="Age:").grid(
-                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+                row=row_index, column=column_index * 2, sticky=tkinter.W, pady=5
             )
             age_entry = ttk.Entry(self.passenger_frame)
-            age_entry.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
+            age_entry.grid(row=row_index, column=column_index * 2 + 1, sticky=(tkinter.W, tkinter.E), pady=5)
             row_index += 1
 
             ttk.Label(self.passenger_frame, text="Gender:").grid(
-                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+                row=row_index, column=column_index * 2, sticky=tkinter.W, pady=5
             )
             gender_combobox = ttk.Combobox(self.passenger_frame, values=self.genders)
-            gender_combobox.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
+            gender_combobox.grid(row=row_index, column=column_index * 2 + 1, sticky=(tkinter.W, tkinter.E), pady=5)
             gender_combobox.state(["readonly"])
             row_index += 1
 
             ttk.Label(self.passenger_frame, text="Berth:").grid(
-                row=row_index, column=column_index * 2, sticky=tk.W, pady=5
+                row=row_index, column=column_index * 2, sticky=tkinter.W, pady=5
             )
             berth_combobox = ttk.Combobox(self.passenger_frame, values=self.berths)
-            berth_combobox.grid(row=row_index, column=column_index * 2 + 1, sticky=(tk.W, tk.E), pady=5)
+            berth_combobox.grid(row=row_index, column=column_index * 2 + 1, sticky=(tkinter.W, tkinter.E), pady=5)
             berth_combobox.set(self.berths[0])
             berth_combobox.state(["readonly"])
             row_index += 1

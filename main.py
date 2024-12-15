@@ -1,4 +1,4 @@
-import tk
+import tkinter
 
 from app import BookingApp, messages
 from models import BookingData
@@ -13,7 +13,7 @@ def book(values=None):
     # Entry Loop
     if not values:
         while True:
-            root = tk.Tk()
+            root = tkinter.Tk()
             app = BookingApp(root)
             root.mainloop()
 

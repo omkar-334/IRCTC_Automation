@@ -42,4 +42,6 @@ From here on , you have to continue the payment process manually.
 
 
 Note - For **FromStation** & **ToStation** - Check https://www.irctc.co.in/nget/train-search for exact station names and paste.  
-Note - During Step 3 (Sign in) - There is a captcha which you have to fill manually. The script will wait for 10 seconds then continue.
+Note - During Step 3 (Sign in) - There is a captcha which you have to fill manually. The script will wait for 10 seconds then continue.  
+
+Disclaimer - For educational purposes only
