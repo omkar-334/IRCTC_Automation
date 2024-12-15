@@ -2,11 +2,9 @@
 
 This is not an application for exploring trains or tickets. You must know all details of the train and passengers beforehand.
 
-A Tkinter GUI is provided for data entry. However, you can choose to enter default values in `values.py` beforehand to save time.
+A Tkinter GUI is provided for data entry. However, you can choose to enter default values in `values.py` beforehand to save time. For filling the default values - refer to `dropdowns.py` . Any wrong entry will result in an error.
 
 Note - For **FromStation** & **ToStation** - Check https://www.irctc.co.in/nget/train-search for exact station names and paste.
-
-For filling the default values - refer to `dropdowns.py` . Any wrong entry will result in an error.
 
 ### Process
 1. Enter the train details form
