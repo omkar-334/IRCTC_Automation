@@ -46,20 +46,29 @@ class Booking:
         self.click(xpath["signin"])
         print(f"Signed in as {values['UserID']}")
 
-    def set_date_via_js(self, xpath, raw_date):
-        date = datetime.strptime(raw_date, "%Y-%m-%d").strftime("%d/%m/%Y")
-        element = self.wait.until(EC.visibility_of_element_located((By.XPATH, xpath)))
-        self.driver.execute_script(
-            "arguments[0].value = arguments[1]; arguments[0].dispatchEvent(new Event('input'));",
-            element,
-            date,
-        )
+    def set_date_via_calendar(self, xpath, raw_date):
+        date_obj = datetime.strptime(raw_date, "%Y-%m-%d")
+        day = date_obj.day
+        month = date_obj.strftime("%B")
+        year = date_obj.year
+
+        self.click(xpath)
+
+        while True:
+            current_month_year = self.driver.find_element(By.CLASS_NAME, "ui-datepicker-title").text
+            if f"{month}{year}" in current_month_year:
+                break
+            else:
+                self.driver.find_element(By.CLASS_NAME, "ui-datepicker-next").click()
+
+        day_xpath = f"//a[text()='{day}']"
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, day_xpath))).click()
 
     def enter_form(self):
         self.send_keys(xpath["from"], self.values["FromStation"])
         self.send_keys(xpath["to"], self.values["ToStation"])
 
-        self.set_date_via_js(xpath["date"], self.values["Date"])
+        self.set_date_via_calendar(xpath["date"], self.values["Date"])
 
         self.click(xpath["class"])
         self.click(xpath["option"].format(xpath["class"], self.values["Class"]))
@@ -78,7 +87,7 @@ class Booking:
 
             self.enter_form()
 
-            self.click(xpath["select"].format(self.values["Quota"]))
+            self.click(xpath["select"].format(self.values["Class"]))
             print("refreshed")
 
             date = datetime.strptime(self.values["Date"], "%Y-%m-%d").strftime("%a, %d %b")
