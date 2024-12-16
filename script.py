@@ -191,7 +191,7 @@ class Booking:
 
         self.signin()
 
-        # self.sleep_until()
+        self.sleep_until()
 
         self.enter_form()
 
