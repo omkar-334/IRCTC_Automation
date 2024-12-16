@@ -8,8 +8,10 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from driver import create_driver
 
+# Change these values as needed. If not needed, Set them to None
 CAPTCHA_TIME = 10
 SLEEP_UNTIL_TIME = "11:00:30"
+UPI = True
 
 xpath = {
     # Signin
@@ -41,6 +43,7 @@ xpath = {
     #
     # Payment Details
     "mobile": "//input[@formcontrolname='mobileNumber']",
+    "upi": "//p-radiobutton[@formcontrolname='paymentType' and @id='2']",
     "continue": "//button[@type='submit' and normalize-space(.)='Continue']",
 }
 
@@ -50,6 +53,7 @@ class Booking:
         self.values = values
         self.captcha_time = CAPTCHA_TIME or 10
         self.sleep_until_time = SLEEP_UNTIL_TIME if SLEEP_UNTIL_TIME else None
+        self.upi = UPI
 
     def click(self, xpath):
         try:
@@ -150,7 +154,6 @@ class Booking:
             gender_xpath = f"({xpath['gender']})[{index}]"
             berth_xpath = f"({xpath['berth']})[{index}]"
 
-            print(name_xpath)
             self.send_keys(name_xpath, i["Name"])
             self.send_keys(age_xpath, i["Age"])
 
@@ -175,6 +178,8 @@ class Booking:
 
     def start_payment(self):
         self.send_keys(xpath["mobile"], self.values["MobileNo"])
+        if self.upi:
+            self.click(xpath["upi"])
         self.click(xpath["continue"])
         print("Payment Initiated")
 
@@ -186,7 +191,7 @@ class Booking:
 
         self.signin()
 
-        self.sleep_until()
+        # self.sleep_until()
 
         self.enter_form()
 
