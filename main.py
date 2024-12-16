@@ -20,12 +20,12 @@ def book(values=None):
     else:
         try:
             BookingData(**values)
-
-            booking = Booking(values)
-            booking.main()
         except Exception as e:
             errors = "\n".join(messages(e))
             print(errors)
+
+        booking = Booking(values)
+        booking.main()
 
 
 book(values)

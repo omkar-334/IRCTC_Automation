@@ -8,6 +8,8 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 
 from driver import create_driver
 
+CAPTCHA_TIME = 10
+
 xpath = {
     # Signin
     "login": "//button[text()='LOGIN']",
@@ -61,11 +63,17 @@ class Booking:
             field.send_keys(nextkeys)
 
     def signin(self):
+        try:
+            self.wait.until(EC.presence_of_element_located((By.XPATH, xpath["user_id"])))
+        except:
+            self.driver.find_element(By.CSS_SELECTOR, "a > i.fa-align-justify").click()
+            self.click(xpath["login"])
+
         self.send_keys(xpath["user_id"], self.values["UserID"])
         self.send_keys(xpath["password"], self.values["Password"])
 
         print("\n### Enter Captcha\n")
-        time.sleep(10)
+        time.sleep(CAPTCHA_TIME)
 
         self.click(xpath["signin"])
         print(f"Signed in as {self.values['UserID']}")
@@ -116,12 +124,18 @@ class Booking:
     def add_passengers(self):
         passengers = self.values["Passengers"]
 
-        for i in passengers:
-            self.send_keys(xpath["name"], i["Name"])
-            self.send_keys(xpath["age"], i["Age"])
+        for index, i in enumerate(passengers, start=1):
+            name_xpath = f"({xpath['name']})[{index}]"
+            age_xpath = f"({xpath['age']})[{index}]"
+            gender_xpath = f"({xpath['gender']})[{index}]"
+            berth_xpath = f"({xpath['berth']})[{index}]"
+
+            print(name_xpath)
+            self.send_keys(name_xpath, i["Name"])
+            self.send_keys(age_xpath, i["Age"])
 
             gender = i["Gender"][0].upper()
-            dropdown = self.driver.find_element(By.XPATH, xpath["gender"])
+            dropdown = self.driver.find_element(By.XPATH, gender_xpath)
             Select(dropdown).select_by_value(gender)
 
             berth = i["Berth"].upper().split()
@@ -131,7 +145,7 @@ class Booking:
                 berth = berth[0][0] + berth[1][0]
 
             if berth != "NP":
-                dropdown = self.driver.find_element(By.XPATH, xpath["berth"])
+                dropdown = self.driver.find_element(By.XPATH, berth_xpath)
                 Select(dropdown).select_by_value(berth)
 
             if i != passengers[-1]:
@@ -150,11 +164,11 @@ class Booking:
 
         self.driver.get("https://www.irctc.co.in/nget/train-search")
 
+        self.signin()
+
         self.enter_form()
 
         self.select_ticket()
-
-        self.signin()
 
         self.add_passengers()
 
