@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import Select, WebDriverWait
 from driver import create_driver
 
 CAPTCHA_TIME = 10
+SLEEP_UNTIL_TIME = "11:00:30"
 
 xpath = {
     # Signin
@@ -47,6 +48,8 @@ xpath = {
 class Booking:
     def __init__(self, values):
         self.values = values
+        self.captcha_time = CAPTCHA_TIME or 10
+        self.sleep_until_time = SLEEP_UNTIL_TIME if SLEEP_UNTIL_TIME else None
 
     def click(self, xpath):
         try:
@@ -73,10 +76,27 @@ class Booking:
         self.send_keys(xpath["password"], self.values["Password"])
 
         print("\n### Enter Captcha\n")
-        time.sleep(CAPTCHA_TIME)
+        time.sleep(self.captcha_time)
 
         self.click(xpath["signin"])
         print(f"Signed in as {self.values['UserID']}")
+
+    def sleep_until(self):
+        if self.sleep_until_time:
+            now = datetime.now()
+
+            target = datetime.strptime(self.sleep_until_time, "%H:%M:%S").replace(
+                year=now.year, month=now.month, day=now.day
+            )
+
+            if target < now:
+                target += timedelta(days=1)
+
+            sleep_duration = (target - now).total_seconds()
+
+            if sleep_duration > 0:
+                print(f"Sleeping for {sleep_duration} seconds...")
+                time.sleep(sleep_duration)
 
     def set_date_via_calendar(self, xpath, raw_date):
         date_obj = datetime.strptime(raw_date, "%Y-%m-%d")
@@ -165,6 +185,8 @@ class Booking:
         self.driver.get("https://www.irctc.co.in/nget/train-search")
 
         self.signin()
+
+        self.sleep_until()
 
         self.enter_form()
 
