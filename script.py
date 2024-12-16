@@ -94,7 +94,7 @@ class Booking:
             )
 
             if target < now:
-                target += timedelta(days=1)
+                return
 
             sleep_duration = (target - now).total_seconds()
 
